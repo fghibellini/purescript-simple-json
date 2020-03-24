@@ -57,6 +57,7 @@ import Record (get)
 import Record.Builder (Builder)
 import Record.Builder as Builder
 import Type.Prelude (RLProxy(..))
+import Data.UUID (UUID, parseUUID, toString)
 
 -- | An alias for the Either result of decoding
 type E a = Either MultipleErrors a
@@ -161,6 +162,13 @@ instance readInt :: ReadForeign Int where
 
 instance readString :: ReadForeign String where
   readImpl = readString
+
+instance readUUID :: ReadForeign UUID where
+  readImpl x = do
+    str <- readImpl x
+    case parseUUID str of
+      Nothing -> fail $ ForeignError ("Invalid UUID: " <> str)
+      Just uuid -> pure uuid
 
 instance readBoolean :: ReadForeign Boolean where
   readImpl = readBoolean
@@ -287,6 +295,9 @@ instance writeForeignForeign :: WriteForeign Foreign where
 
 instance writeForeignString :: WriteForeign String where
   writeImpl = unsafeToForeign
+
+instance writeForeignUUID :: WriteForeign UUID where
+  writeImpl = writeImpl <<< toString
 
 instance writeForeignInt :: WriteForeign Int where
   writeImpl = unsafeToForeign

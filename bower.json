@@ -21,7 +21,8 @@
     "purescript-globals": "^4.0.0",
     "purescript-foreign": "^5.0.0",
     "purescript-exceptions": "^4.0.0",
-    "purescript-arrays": "^5.3.0"
+    "purescript-arrays": "^5.3.0",
+    "purescript-uuid": "^6.0.0"
   },
   "devDependencies": {
     "purescript-assert": "^4.1.0",
