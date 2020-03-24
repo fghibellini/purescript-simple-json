@@ -58,6 +58,7 @@ import Record.Builder (Builder)
 import Record.Builder as Builder
 import Type.Prelude (RLProxy(..))
 import Data.UUID (UUID, parseUUID, toString)
+import Data.JSDate (JSDate, parse, toISOString)
 
 -- | An alias for the Either result of decoding
 type E a = Either MultipleErrors a
@@ -169,6 +170,12 @@ instance readUUID :: ReadForeign UUID where
     case parseUUID str of
       Nothing -> fail $ ForeignError ("Invalid UUID: " <> str)
       Just uuid -> pure uuid
+
+instance readJSDate :: ReadForeign JSDate where
+  readImpl x = do
+    str <- readImpl x
+    -- TODO validate?
+    pure $ unsafePerformEffect $ parse str
 
 instance readBoolean :: ReadForeign Boolean where
   readImpl = readBoolean
@@ -298,6 +305,9 @@ instance writeForeignString :: WriteForeign String where
 
 instance writeForeignUUID :: WriteForeign UUID where
   writeImpl = writeImpl <<< toString
+
+instance writeForeignJSDate :: WriteForeign JSDate where
+  writeImpl = writeImpl <<< unsafePerformEffect <<< toISOString
 
 instance writeForeignInt :: WriteForeign Int where
   writeImpl = unsafeToForeign
